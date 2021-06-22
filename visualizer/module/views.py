@@ -9,7 +9,7 @@ import numpy as np
 from django.conf import settings
 from nilearn.masking import apply_mask
 
-def getSlice(img_data, axis, slice_nb):
+def makeSlice(img_data, axis, slice_nb):
     if axis=="X":
         slice_data = img_data[slice_nb, :, :]
     elif axis=="Y":
@@ -29,7 +29,8 @@ def openFile(file_name, folder_path):
 def makeHist(ax, data, file_name):
     flatten = data.flatten()
     rescale = ((flatten + np.absolute(flatten.min()))/np.absolute(flatten.max())) * 255
-    ax.hist(rescale, bins=np.arange(1, 255))
+    without_zeroes = rescale[np.nonzero(rescale)]
+    ax.hist(without_zeroes, bins=np.arange(1, 255))
     ax.set(xlabel=f"{file_name} color histogram")
     return ax
 
@@ -49,7 +50,7 @@ def getSlice(request, axis, slice_nb, file_name):
         return HttpResponse(f"<h1> Not enough slices in the requested axis \
         ({axis}). Max is {maximum_slice_nb}. </h1>", status=405)
 
-    slice_data = getSlice(img_data, axis, slice_nb)
+    slice_data = makeSlice(img_data, axis, slice_nb)
     fig,ax = plt.subplots()
     ax.imshow(slice_data.T, cmap="gray", origin="lower")
     ax.set(xlabel=f"slice {slice_nb} axis {axis}")
