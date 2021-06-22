@@ -1,0 +1,4 @@
+Django==3.2.4
+matplotlib==3.4.2
+nibabel==3.2.1
+nilearn==0.8.0
