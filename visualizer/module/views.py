@@ -27,7 +27,7 @@ def makeSlice(img_data, axis, slice_nb):
 def openFile(file_name, folder_path):
     filepath = join(folder_path,file_name)
     if not isfile(filepath):
-        return HttpResponse(f"<h1>Requested file do not exist<\h1>", status=404)
+        return HttpResponse(f"<h1>Requested file do not exist</h1>", status=404)
 
     img_data = nib.load(filepath).get_fdata()
     return img_data
@@ -74,11 +74,7 @@ def drawHist(file_name):
 def home(request):
     files = [f for f in listdir(settings.IMAGES_DATA_PATH) if isfile(join(settings.IMAGES_DATA_PATH, f))]
     if request.method == 'POST':
-        print(request.POST.__dict__)
-        print(request)
         display_form = Display(request.POST)
-        print(display_form.is_valid)
-        print(display_form.errors)
         if display_form.is_valid():
             graphic = BytesIO()
             func = display_form.cleaned_data["func"]
@@ -119,8 +115,9 @@ def getSlice(request, axis, slice_nb, file_name):
     canvas = drawSlice(axis, slice_nb, file_name)
     if isinstance(canvas, HttpResponse):
         return canvas
-    canvas.print_png(response)
+
     response = HttpResponse(content_type = 'image/png')
+    canvas.print_png(response)
 
     return response
 
@@ -143,7 +140,7 @@ def drawMaskHist(file_name, mask_name):
     if isinstance(img_data, HttpResponse):
         return img_data
     mask_data = openFile(mask_name, settings.MASKS_DATA_PATH)
-    if isinstance(img_data, HttpResponse):
+    if isinstance(mask_data, HttpResponse):
         return mask_data
 
     #masked_data = apply_mask(img_data, mask_data)
@@ -160,7 +157,7 @@ def drawMaskHist(file_name, mask_name):
 
 def getMaskHist(request, file_name, mask_name):
     if request.method != "GET":
-        return HttpResponse("<h1>Wrong request type<\h1>", status=405)
+        return HttpResponse("<h1>Wrong request type</h1>", status=405)
 
     canvas = drawMaskHist(file_name, mask_name)
     if isinstance(canvas, HttpResponse):
