@@ -39,7 +39,6 @@ def makeHist(ax, data, label):
     # data = 255*((data - np.nanmin(data))/nan_ptp(data))
     data -= np.nanmin(data)
     data *= 255/nan_ptp(data)
-
     ax.hist(data.flatten(), bins=np.arange(0, 255), histtype='step')
     ax.set(xlabel=label)
     return ax
@@ -76,8 +75,12 @@ def drawHist(file_name):
 
 @csrf_exempt
 def home(request):
-    files = sorted([f for f in listdir(settings.IMAGES_DATA_PATH) 
-    if isfile(join(settings.IMAGES_DATA_PATH, f))])
+    files = sorted(
+        filter(
+        lambda s: s.endswith(".nii.gz") and isfile(join(settings.IMAGES_DATA_PATH, s)),
+        listdir(settings.IMAGES_DATA_PATH))
+        )
+
     if request.method == 'POST':
         display_form = Display(request.POST)
         if display_form.is_valid():
