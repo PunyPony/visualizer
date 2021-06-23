@@ -3,6 +3,32 @@
 
 {% block content %}
 
+<style>
+  #hideValuesOnSelect {
+     display: none;
+  }
+</style>
+
+<script>
+  function displayDiv(elementValue) {
+      if (elementValue.value == "slice")
+      {
+        document.getElementById('ShowValuesOnSelectSlice').style.display = 'block';
+        document.getElementById('ShowValuesOnSelectHist').style.display = 'none';
+        
+      }
+      else if (elementValue.value == "hist")
+      {
+        document.getElementById('ShowValuesOnSelectSlice').style.display = 'none';
+        document.getElementById('ShowValuesOnSelectHist').style.display = 'block';
+      }
+      else{
+        document.getElementById('ShowValuesOnSelectSlice').style.display = 'none';
+        document.getElementById('ShowValuesOnSelectHist').style.display = 'none';
+      }
+  }
+</script>
+
 <form action="/" method="post">
 
     <div class="form-group">
@@ -16,36 +42,36 @@
 
     <div class="form-group">
       <label for="func">Method to call</label>
-      <select id="func" name="func" class="custom-select" required>
-          <option  value=slice> slice </option>
-          <option  value=hist> hist </option>
+      <select id="func" name="func" class="custom-select" onchange="displayDiv(this)" required >
+          <option  value=""> Choose what to do </option>
+          <option  value="slice"> slice </option>
+          <option  value="hist"> hist </option>
       </select>
     </div>
-  
-    <div class="form-group">
-      <label for="axis">Slice axis</label>
-      <select id="axis" name="axis" class="custom-select" required>
-          <option  value=X> X </option>
-          <option  value=Y> Y </option>
-          <option  value=Z> Z </option>
-      </select>
+
+    <div id="ShowValuesOnSelectSlice" style="display:none">
+      <div class="form-group">
+        <label for="axis">Slice axis</label>
+        <select id="axis" name="axis" class="custom-select" required>
+            <option  value=X> X </option>
+            <option  value=Y> Y </option>
+            <option  value=Z> Z </option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="slice_nb">Slice number</label>
+        <input type="number" class="form-control" id=slice_nb name="slice_nb">
+      </div>
     </div>
     
-    <!-- <div class="form-group">
-      <label for="use_mask">Use mask</label>
-      <input type="checkbox" class="form-check-input" id="use_mask" name="use_mask">
-    </div> -->
-
-    <div class="form-check form-switch">
-      <input class="form-check-input" type="checkbox" id="use_mask" name="use_mask">
-      <label class="form-check-label" for="use_mask">Use mask</label>
+    <div id="ShowValuesOnSelectHist" style="display:none">
+      <div class="form-check form-switch">
+        <input class="form-check-input" type="checkbox" id="use_mask" name="use_mask">
+        <label class="form-check-label" for="use_mask">Use mask</label>
+      </div>
     </div>
 
-    <div class="form-group">
-      <label for="slice_nb">Slice number</label>
-      <input type="number" class="form-control" id=slice_nb name="slice_nb">
-    </div>
-    
     <button type="submit" class="btn btn-primary">Submit</button>
 
 </form>
