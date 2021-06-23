@@ -33,10 +33,14 @@ def openFile(file_name, folder_path):
     return img_data
 
 def makeHist(ax, data, label):
-    flatten = data.flatten()
-    rescale = ((flatten + np.absolute(flatten.min()))/np.absolute(flatten.max())) * 255
-    without_zeroes = rescale[np.nonzero(rescale)]
-    ax.hist(without_zeroes, bins=np.arange(1, 255), histtype='step')
+    def nan_ptp(a):
+        return np.ptp(a[np.isfinite(a)])
+    
+    # data = 255*((data - np.nanmin(data))/nan_ptp(data))
+    data -= np.nanmin(data)
+    data *= 255/nan_ptp(data)
+
+    ax.hist(data.flatten(), bins=np.arange(0, 255), histtype='step')
     ax.set(xlabel=label)
     return ax
 
@@ -72,7 +76,8 @@ def drawHist(file_name):
 
 @csrf_exempt
 def home(request):
-    files = [f for f in listdir(settings.IMAGES_DATA_PATH) if isfile(join(settings.IMAGES_DATA_PATH, f))]
+    files = sorted([f for f in listdir(settings.IMAGES_DATA_PATH) 
+    if isfile(join(settings.IMAGES_DATA_PATH, f))])
     if request.method == 'POST':
         display_form = Display(request.POST)
         if display_form.is_valid():
