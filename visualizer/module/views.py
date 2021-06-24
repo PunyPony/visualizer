@@ -37,9 +37,15 @@ def makeHist(ax, data, label):
         return np.ptp(a[np.isfinite(a)])
     
     # data = 255*((data - np.nanmin(data))/nan_ptp(data))
-    data -= np.nanmin(data)
-    data *= 255/nan_ptp(data)
-    ax.hist(data.flatten(), bins=np.arange(0, 255), histtype='step')
+    # data -= np.nanmin(data)
+    # data *= 255/nan_ptp(data)
+    # ax.hist(data.flatten(), bins=np.arange(0, 255), histtype='step')
+
+    #reshape or ravel ?
+    values, counts = np.unique(data.ravel(), return_counts=True)
+    values -= np.nanmin(values)
+    values *= 255/nan_ptp(values)
+    ax.hist(values, bins=np.arange(0, 255), histtype='step', weights=counts)
     ax.set(xlabel=label)
     return ax
 
